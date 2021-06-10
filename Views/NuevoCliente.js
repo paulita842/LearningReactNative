@@ -2,10 +2,13 @@ import React, { useState} from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput,Headline, Button, Paragraph, Dialog, Portal } from 'react-native-paper';
 import globalStyles from '../styles/global';
+import axios from 'axios';
 
 
 
-const NuevoCliente = () => {
+const NuevoCliente = ({navigation, route}) => {
+
+  const { guardarConsultarAPI} = route.params;
  
   //campos formulario
 
@@ -14,9 +17,11 @@ const NuevoCliente = () => {
   const [ correo, guardarCorreo] = useState('');
   const [ empresa, guardarEmpresa] = useState('');
   const [ alerta, guardarAlerta] = useState(false);
+  
+
 
   //almacenar clientes en BD
-  const guardarCliente = () =>{
+  const guardarCliente = async () =>{
     //validar
     if(nombre === '' || telefono === '' || correo === '' || empresa === '' ) {
       guardarAlerta(true)
@@ -28,14 +33,27 @@ const NuevoCliente = () => {
     console.log(cliente);
 
     //guardar el cliente en la API
+    try {
+      await axios.post(' http://localhost:3000/clientes', cliente)
+    } catch (error) {
+      console.log(error);
+    }
 
     //Redireccionar
+    navigation.navigate('Inicio');
+
 
     //limpiar el form (opcional)
+    guardarNombre('');
+    guardarTelefono('');
+    guardarCorreo('');
+    guardarEmpresa('');
+
+
+    //cambiar a true para traernos el nuevo cliente
+    guardarConsultarAPI(true);
 
   }
-
-
     return ( 
 
        <View style={globalStyles.contenedor}>
